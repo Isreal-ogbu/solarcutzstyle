@@ -29,20 +29,17 @@ class serviceviewset(ModelViewSet):
 
 
 class styleviewset(ModelViewSet):
-    queryset = stylemodel.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = [permissions.IsAuthenticated, ]
     pagination_class = PageNumberPagination
+
+    def get_queryset(self):
+        return servicemodel.object.get()
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
             return readonlystylemodelserialzers
         return writestylemodelserialzers
-
-    # def list(self, request, *args, format=None, **kwargs):
-    #     user_count = stylemodel.objects.all()
-    #     results = readonlystylemodelserialzers(user_count, many=True)
-    #     return Response(results.data)
 
 
 class offerviewset(ModelViewSet):
