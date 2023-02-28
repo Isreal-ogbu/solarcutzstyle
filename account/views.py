@@ -39,7 +39,7 @@ class login_api(generics.GenericAPIView):
             token = AuthToken.objects.create(user)[1]
             obj = userdetailsserializers(obj)
             if obj.data['userprofilepicture'] is not None:
-                userprofilepicture = "link/" + obj.data['userprofilepicture']
+                userprofilepicture = "127.0.0.1/profile/" + obj.data['userprofilepicture']
             else:
                 userprofilepicture = "https://cdn0.iconfinder.com/data/icons/user-pictures/100/unknown_1-2-512.png"
             obj = {
