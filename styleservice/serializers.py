@@ -46,7 +46,7 @@ class offermodelserializers(serializers.ModelSerializer):
 
     class Meta:
         model = offermodel
-        fields = "__all__"
+        fields = ['id', 'offer_picture', 'offer_discription_top', 'offer_discription_button']
 
 
 class stylistmodelserializers(serializers.ModelSerializer):

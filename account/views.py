@@ -20,7 +20,7 @@ class register_api(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        return Response({"msg": "Registration Successfull...!"})
+        return Response({"msg": "Registration Successfull...!", "status": 200})
 
 
 class login_api(generics.GenericAPIView):

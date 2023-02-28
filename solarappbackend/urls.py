@@ -20,5 +20,5 @@ urlpatterns = [
     path('', include('styleservice.urls')),
     path('', include('phoneverificationapp.urls')),
     path('', include('account.urls')),
-    path('admin/', admin.site.urls),
+    path('79969292cec5c3d432dc9da581ac83322a1f633a73b25f62718764d6fba6982a147499admin/', admin.site.urls),
 ]
