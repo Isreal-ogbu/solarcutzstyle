@@ -31,7 +31,7 @@ class styleviewset(ModelViewSet):
     pagination_class = PageNumberPagination
 
     def get_queryset(self):
-        return servicemodel.object.get()
+        return servicemodel.object.all()
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):

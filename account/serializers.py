@@ -9,7 +9,7 @@ from phoneverificationapp.serializers import userdetailserializer
 class profilepictureserializers(serializers.ModelSerializer):
     class Meta:
         model = userdetails
-        field = ["userprofilepicture"]
+        fields = ["userprofilepicture"]
 
 
 class userRegistrationSerializer(serializers.ModelSerializer):

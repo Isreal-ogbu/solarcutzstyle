@@ -1,15 +1,18 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
 from knox.auth import TokenAuthentication
 from knox.models import AuthToken
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.views import APIView
+from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 
 from .models import userdetails
 
-from .serializers import userRegistrationSerializer, logindetailsserializers, userdetailsserializers
+from .serializers import userRegistrationSerializer, logindetailsserializers, userdetailsserializers, \
+    profilepictureserializers
 
 
 class register_api(generics.GenericAPIView):
@@ -19,12 +22,14 @@ class register_api(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        serializer.save()
         return Response({"msg": "Registration Successfull...!", "status": 200})
 
 
 class login_api(generics.GenericAPIView):
     serializer_class = logindetailsserializers
+
+    """ A csrf token will not be submitted as a result of no authentication """
 
     @csrf_exempt
     def post(self, request, format=None):
@@ -39,11 +44,10 @@ class login_api(generics.GenericAPIView):
             token = AuthToken.objects.create(user)[1]
             obj = userdetailsserializers(obj)
             if obj.data['userprofilepicture'] is not None:
-                userprofilepicture = "127.0.0.1/profile/" + obj.data['userprofilepicture']
+                userprofilepicture = "127.0.0.1" + obj.data['userprofilepicture']
             else:
                 userprofilepicture = "https://cdn0.iconfinder.com/data/icons/user-pictures/100/unknown_1-2-512.png"
             obj = {
-                'id': user.id,
                 'username': user.username,
                 'profile': userprofilepicture,
             }
@@ -60,7 +64,45 @@ class login_api(generics.GenericAPIView):
 
 class usersview(ReadOnlyModelViewSet):
     """This view is only to be seen by the admin"""
-    serializer_class = userdetailsserializers
+    serializer_class = profilepictureserializers
     queryset = userdetails.objects.all()
     permission_classes = [permissions.IsAdminUser, ]
     authentication_classes = [TokenAuthentication, ]
+
+
+class profilepictureview(APIView):
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [permissions.IsAuthenticated]
+
+    """
+        Retrieve, update or delete a snippet instance.
+        """
+
+    def get_object(self, pk):
+        try:
+            return userdetails.objects.get(owner=pk)
+        except userdetails.DoesNotExist:
+            raise Http404
+
+    def get(self, request, format=None):
+        pic = self.get_object(request.user)
+        serializer = profilepictureserializers(pic)
+        return Response(serializer.data)
+
+    def put(self, request, format=None):
+        pic = self.get_object(request.user)
+        print(type(request.data))
+        serializer = profilepictureserializers(pic, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # def delete(self, request, format=None):
+    #     pic = self.get_object(request.user)
+    #     serializer = profilepictureserializers(pic, data='')
+    #     if serializer.is_valid():
+    #         serializer.save(commit=False)
+    #         serializer.data["userprofilepicture"] = None
+    #         serializer.save()
+    #         return Response(status=status.HTTP_204_NO_CONTENT)
