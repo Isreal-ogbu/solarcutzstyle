@@ -33,7 +33,7 @@ class writestylemodelserialzers(serializers.ModelSerializer):
 
 class readonlystylemodelserialzers(serializers.ModelSerializer):
     style_picture = HybridImageField()
-    service_picture = readservicemodelserializers()
+    # service_picture = readservicemodelserializers() # I can change it anytime
 
     class Meta:
         model = stylemodel

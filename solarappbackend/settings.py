@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "account",
     "phoneverificationapp",
     'styleservice',
+    'extraservices',
 ]
 
 MIDDLEWARE = [

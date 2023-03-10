@@ -27,11 +27,11 @@ class serviceviewset(ModelViewSet):
 
 class styleviewset(ModelViewSet):
     authentication_classes = (TokenAuthentication,)
-    permission_classes = [permissions.IsAuthenticated, ]
+    permission_classes = [permissions.IsAuthenticated, ] # Will only be visible to admin upon deployment 
     pagination_class = PageNumberPagination
 
     def get_queryset(self):
-        return servicemodel.object.all()
+        return stylemodel.objects.all()
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
@@ -76,6 +76,7 @@ class bookingsviewset(ModelViewSet):
 class service_style_view(APIView):
     permission_classes = [permissions.IsAuthenticated, ]
     authentication_classes = [TokenAuthentication, ]
+    pagination_class = PageNumberPagination
     """
     Retrieve, update or delete a snippet instance.
     """
@@ -97,6 +98,6 @@ class service_style_view(APIView):
             serializer = readonlystylemodelserialzers(snippet)
         elif pk1:
             snippet = self.get_objects(pk1)
-            print(snippet)
+
             serializer = readonlystylemodelserialzers(snippet, many=True)
-        return Response(serializer.data)
+        return self.get_paginated_response(serializer.data)
