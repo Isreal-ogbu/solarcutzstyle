@@ -14,6 +14,5 @@ def check(phone, code):
     try:
         result = verify.verification_checks.create(to=phone, code=code)
     except TwilioRestException:
-        print('no')
         return False
     return True

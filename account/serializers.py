@@ -20,6 +20,7 @@ class userRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["username", "password", "confirm_password"]
+        read_only_fields = fields
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -55,8 +56,8 @@ class logindetailsserializers(serializers.ModelSerializer):
 
 class userdetailsserializers(serializers.ModelSerializer):
     owner = userdetailserializer()
+
     class Meta:
         model = userdetails
         fields = ['owner', 'userprofilepicture']
         read_only_fields = fields
-

@@ -9,6 +9,7 @@ class userdetailserializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username"]
+        read_only_fields = fields
 
 
 class phonelistserializers(serializers.ModelSerializer):
@@ -68,3 +69,7 @@ class userprofileserializers(serializers.ModelSerializer):
     class Meta:
         model = phonenumbermodel
         fields = ['owner', 'phonenumber']
+
+
+class tokenSerializers(serializers.Serializer):
+    token = serializers.CharField(write_only=True, max_length=6, min_length=6)

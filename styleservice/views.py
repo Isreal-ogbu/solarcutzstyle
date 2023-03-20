@@ -16,13 +16,18 @@ from .serializers import offermodelserializers, \
 class serviceviewset(ModelViewSet):
     queryset = servicemodel.objects.all()
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,)
     pagination_class = PageNumberPagination
+    permission_classes = (permissions.IsAdminUser,)
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
             return readservicemodelserializers
         return writeservicemodelserializers
+
+    def get_permissions(self):
+        if self.action == 'list' and self.request.user.is_active:
+            return (permissions.IsAuthenticated(),)
+        return super().get_permissions()
 
 
 class styleviewset(ModelViewSet):

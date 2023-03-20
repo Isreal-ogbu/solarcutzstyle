@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
 from knox.auth import TokenAuthentication
@@ -25,13 +26,16 @@ class register_api(generics.GenericAPIView):
         serializer.save()
         return Response({"msg": "Registration Successfull...!", "status": 200})
 
+    def get(self, request, format=None):
+        return Response(status=status.HTTP_200_OK)
+
 
 class login_api(generics.GenericAPIView):
     serializer_class = logindetailsserializers
 
     """ A csrf token will not be submitted as a result of no authentication """
 
-    @csrf_exempt
+    @transaction.atomic
     def post(self, request, format=None):
         username = request.data['username']
         password = request.data['password']
@@ -60,6 +64,10 @@ class login_api(generics.GenericAPIView):
             return Response({
                 "msg": "User Not Found...!"
             }, 404)
+
+    def get(self, request, format=None):
+        return Response(status=status.HTTP_200_OK)
+
 
 
 class usersview(ReadOnlyModelViewSet):

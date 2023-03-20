@@ -5,27 +5,30 @@ from django.http import Http404
 from rest_framework import viewsets, permissions, mixins, status
 from knox.auth import TokenAuthentication
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateAPIView
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from .serializers import phoneverificationserializers, phonelistserializers, userprofileserializers, Userserializers
+from .serializers import phoneverificationserializers, phonelistserializers, userprofileserializers, Userserializers, tokenSerializers
 from .models import phonenumbermodel
 from rest_framework.response import Response
 from .verify import check
 
 
-class phonenumberviewset(CreateAPIView):
+class phonenumberviewset(ListCreateAPIView):
     """phone/"""
     serializer_class = phoneverificationserializers
     queryset = phonenumbermodel.objects.all()
     permission_classes = [permissions.IsAuthenticated, ]
     authentication_classes = [TokenAuthentication, ]
+    pagination_class = None
 
     def perform_create(self, serializer):
         '''Associate user with phone number'''
         serializer.save(owner=self.request.user)
 
+    def list(self, request, format=None):
+        return Response(status=status.HTTP_200_OK)
 
 class phonenumberviews(ListAPIView):
     """status/"""
@@ -39,22 +42,30 @@ class phonenumberviews(ListAPIView):
         return Response(results.data)
 
 
-@api_view(["POST"])
+@api_view(["POST", "GET"])
 @permission_classes([permissions.IsAuthenticated])
 @authentication_classes([TokenAuthentication, ])
 def verifyphonenumber(request):
     """To verify otp service"""
     if request.method == "POST":
-        code = request.data['key']
-        if len(str(code)) < 6 or len(str(code)) > 6 or str(code).isalpha():
+        print(request.data)
+        serializer = tokenSerializers(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        code = serializer.validated_data["token"]
+        if not code:
+            raise ValueError('Users Must Have an otp code')
+        if len(str(code)) < 6 or len(str(code)) > 6 or type(code) == "Integer":
             return Response({"status": "invalid"}, 300)
         user = phonenumbermodel.objects.get(owner=request.user)
         if check(user.phonenumber, code):
+            print(user.phonenumber, code)
             user.verifiednumber = True
             user.save()
             return Response({"msg": "Successful", "status": 200})
         else:
             return Response({"msg": "UnSuccessful", "status": 422})
+    elif request.method == "GET":
+        return Response(status=status.HTTP_200_OK)
 
 
 # class profileviewset(ModelViewSet):

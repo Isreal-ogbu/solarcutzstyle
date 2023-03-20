@@ -10,6 +10,8 @@ class phonenumbermodel(models.Model):
     phonenumber = models.CharField(max_length=14)
     key = models.CharField(max_length=50, unique=True, blank=True)
     verifiednumber = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
 
     def authenticate(self, otp):
         """ This method authenticates the given otp"""
