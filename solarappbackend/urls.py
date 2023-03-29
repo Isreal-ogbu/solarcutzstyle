@@ -20,6 +20,7 @@ from django.urls import path, include
 from solarappbackend import settings
 
 urlpatterns = [
+    path('', include('extraservices.urls')),
     path('', include('styleservice.urls')),
     path('', include('phoneverificationapp.urls')),
     path('', include('account.urls')),

@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = False  # Remenber to change before deploying
 
 ALLOWED_HOSTS = ["localhost", "solarapp.pythonanywhere.com"]
 
@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
 
     'rest_framework.authtoken',
     'rest_framework',
@@ -136,13 +135,13 @@ TWILIO_PHONE = config('TWILIO_PHONE', default=None)
 TWILIO_ACCOUNT_SID = config("TWILIO_ACCOUNT_SID", default=None)
 TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN', default=None)
 
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
     # 'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
 }
 
 from datetime import timedelta
+
 # from rest_framework.settings import api_settings
 
 REST_KNOX = {
