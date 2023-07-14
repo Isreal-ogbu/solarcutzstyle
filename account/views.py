@@ -9,6 +9,8 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
+from django.contrib.auth import login
+
 
 from .models import userdetails
 
@@ -57,6 +59,7 @@ class login_api(generics.GenericAPIView):
             }
             if obj['profile'] is None:
                 pass
+            login(user)
             request.session['current_user'] = user.id
             return Response({"msg": "Login Successfull...!", "token": token,
                              "user": obj, "status": 200})

@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False  # Remenber to change before deploying
+DEBUG = True # Remenber to change before deploying
 
-ALLOWED_HOSTS = ["localhost", "solarapp.pythonanywhere.com"]
+ALLOWED_HOSTS = []
 
 # Application definition
 
